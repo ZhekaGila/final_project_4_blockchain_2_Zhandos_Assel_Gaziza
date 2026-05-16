@@ -1,66 +1,73 @@
-## Foundry
+# GameFi Economy Final Project
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Option B implementation for the Blockchain Technologies 2 final project.
 
-Foundry consists of:
+## Implemented Criteria
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+- ERC1155 in-game items and resources: `src/gamefi/GameItems.sol`
+- Crafting with DAO-governed recipe costs: `src/gamefi/GameParametersV1.sol`
+- Constant-product AMM for fungible ERC1155 resources with 0.3% fee and LP token: `src/gamefi/ResourceAMM.sol`
+- NFT rental vault with temporary `userOf`: `src/gamefi/NFTRentalVault.sol`
+- Chainlink-style VRF loot fulfillment hook: `src/gamefi/LootDrop.sol`
+- Chainlink price feed adapter with stale-price check: `src/gamefi/ChainlinkPriceOracle.sol`
+- ERC20Votes + ERC20Permit governance token: `src/gamefi/GameToken.sol`
+- OpenZeppelin Governor + TimelockController: `src/governance/GameGovernor.sol`
+- ERC4626 treasury vault: `src/gamefi/GameTreasuryVault.sol`
+- UUPS upgrade path V1 to V2: `src/gamefi/GameParametersV1.sol`, `src/gamefi/GameParametersV2.sol`
+- Factory using CREATE and CREATE2: `src/gamefi/ResourceAMMFactory.sol`
+- Inline Yul benchmark target: `src/gamefi/CraftingMath.sol`
+- Subgraph: `subgraph/`
+- Frontend dApp: `frontend/`
+- CI pipeline: `.github/workflows/ci.yml`
+- Architecture, audit, gas, coverage, and deployment docs: `docs/`
 
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
+## Commands
 
 ```shell
-$ forge fmt
+forge build
+forge test -vv
+forge coverage --report summary
 ```
 
-### Gas Snapshots
+Frontend:
 
 ```shell
-$ forge snapshot
+cd frontend
+npm install
+npm run dev
 ```
 
-### Anvil
+## L2 Deployment
+
+Target network: Arbitrum Sepolia.
 
 ```shell
-$ anvil
+forge script script/DeployGameFi.s.sol:DeployGameFi \
+  --rpc-url $ARBITRUM_SEPOLIA_RPC_URL \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --verify \
+  --etherscan-api-key $ARBISCAN_API_KEY
 ```
 
-### Deploy
+After deployment, fill `docs/deployment-addresses.md`, update `subgraph/subgraph.yaml`, and run:
 
 ```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+forge script script/VerifyDeployment.s.sol:VerifyDeployment --rpc-url $ARBITRUM_SEPOLIA_RPC_URL
 ```
 
-### Cast
+## GraphQL Queries
 
-```shell
-$ cast <subcommand>
+```graphql
+{ crafts(first: 10, orderBy: timestamp, orderDirection: desc) { player inputId outputId inputAmount } }
+{ pools(first: 5) { id reserveA reserveB swaps liquidityEvents } }
+{ swaps(first: 10, orderBy: timestamp, orderDirection: desc) { trader tokenIn amountIn tokenOut amountOut } }
+{ liquidityPositions(first: 10) { provider liquidityAdded liquidityRemoved } }
+{ rentals(where: { active: true }) { owner renter nft tokenId expiresAt } }
 ```
 
-### Help
+## Current Local Verification
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+`forge test -vv`: 23 passed, 0 failed.
+
+Real L2 addresses and explorer verification require funded deployer credentials and RPC/API keys.
