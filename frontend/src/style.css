@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  background: #f7f8fb;
+  color: #17202a;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+article,
+section {
+  background: white;
+  border: 1px solid #dfe4ea;
+  border-radius: 8px;
+  margin-top: 16px;
+  padding: 18px;
+}
+
+button {
+  background: #166534;
+  border: 0;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 10px 14px;
+}
+
+.notice {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 6px;
+  padding: 12px;
+}
