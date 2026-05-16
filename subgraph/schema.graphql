@@ -1,0 +1,45 @@
+type Craft @entity(immutable: true) {
+  id: Bytes!
+  player: Bytes!
+  inputId: BigInt!
+  outputId: BigInt!
+  inputAmount: BigInt!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+}
+
+type Pool @entity {
+  id: Bytes!
+  reserveA: BigInt!
+  reserveB: BigInt!
+  liquidityEvents: BigInt!
+  swaps: BigInt!
+}
+
+type Swap @entity(immutable: true) {
+  id: Bytes!
+  trader: Bytes!
+  tokenIn: BigInt!
+  amountIn: BigInt!
+  tokenOut: BigInt!
+  amountOut: BigInt!
+  timestamp: BigInt!
+}
+
+type LiquidityPosition @entity {
+  id: Bytes!
+  provider: Bytes!
+  liquidityAdded: BigInt!
+  liquidityRemoved: BigInt!
+}
+
+type Rental @entity {
+  id: Bytes!
+  owner: Bytes!
+  renter: Bytes
+  nft: Bytes!
+  tokenId: BigInt!
+  price: BigInt!
+  expiresAt: BigInt
+  active: Boolean!
+}
